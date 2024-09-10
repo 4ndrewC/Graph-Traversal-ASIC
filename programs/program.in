@@ -1,0 +1,14 @@
+stw 1, 2, 1
+stw 2, 3, 1
+stw 3, 4, 1
+styp 1
+scn 1
+step
+step
+step
+step
+step
+step
+step
+step
+step

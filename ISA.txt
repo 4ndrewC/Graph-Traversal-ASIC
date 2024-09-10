@@ -1,0 +1,96 @@
+Instructions:
+
+Instruction types:
+
+**Graph Instructions**
+- 6 bit opcode + 15 bit next -> 15 bit imm                          [ADG]   
+- 6 bit opcode + 3 bit register + 15 bit next
+
+**Other**
+- 6 bit opcode + 6 bit register -> 32 bit imm
+- 6 bit opcode + 6 bit register
+- 6 bit opcode + 6 bit register + 15 bit addr
+- 6 bit opcode -> 32 bit imm
+
+
+ALU Instructions:
+
+add (ra, rb) - add two registers ra+rb, store in ra    000000 
+addi (ra, x) - add immediate ra+x, store in ra    000001 
+sub (ra, rb) - subtract two registers ra-rb, store in ra    000010 
+subi (ra, x) - subtract ra-x, store in ra      000011 
+and (ra, rb) - ra&rb, store in ra    000100 
+and (ra, rx) - ra&x, store in ra    000101 
+or (ra, rb) - ra|rb, store in ra      000110 
+ori (ra, x) - ra|x, store in ra     000111 
+xor (ra, rb) - ra^rb, store in ra     001000 
+xori (ra, x) - ra^x, store in ra     001001 
+cmp (ra, rb) - rb-ra, if res is 0 -> Z flag set     001010
+cmpi (ra, x) - x-ra, if res is 0 -> Z flag set     001011
+
+Regular Instructions:
+
+ldi (ra, x) - load immediate x into ra      001100
+lda (ra, x) - load from address x into ra      001101
+ldw (ra, x) - load ra into address x    001110
+jmp (x) - jump PC = x - 1     001111
+rjmp (x) - relative jump PC = PC + x - 1   010000
+breq (x) - check Z flag, if Z flag then PC = PC + x - 1   010001
+mov (ra, rb) - copies content of rb into ra    010010
+clr (ra) - clears ra     010011
+
+Status flag modify Instructions:
+
+clc - clear carry    010100 
+clz - clear zero   010101
+cln - clear negative   010110
+cls - clear signed   010111
+cli - clear interrupt   011000
+slc - set carry   011001
+slz - set zero   011010
+sln - set negative   011011
+sls - set signed   011100
+sli - set interrupt   011101
+
+Graph Instructions:
+
+strn (ra, x) - store node in ra into address x
+svs (x) - set visited for (x+offset)/32 + x%32
+cvs (x) - clear visited for (x+offset)/32 + x%32
+rdg (x, y) - remove edge between 2 nodes, set weight = 0
+stw (x, y, w) - set weight between x and y to w
+ldwr (ra, x, y) - load weight between x and y into ra
+scn (x) - set current iterating node
+styp (x) - set traversal type (1=dfs, 2=bfs)
+step - traverse set forward
+rmn (x) - remove node x
+
+
+
+Registers:
+
+Traversal registers:
+
+rn - node register
+    - 1 bit -> traversal type
+    - 15 bits -> current node
+    - 15 bits -> next node
+sp - stack pointer (for dfs)
+
+
+
+Memory Map:
+
+2^30 locs for nodes and edges
+(2^15)/32 for visited (32)
+Each node needs one extra memory spot to track how many children
+
+0-32767 node indices
+32768-1073742847 edges
+1073742848-1107297311 visited
+
+
+when to stall:
+- branching (jmp, rjmp, breq)
+- load right after store (problematic, since STEP will store into rn and 
+                            next operation will need value of current rn)
