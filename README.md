@@ -15,7 +15,6 @@ Assemble program by running ```./cpu/conv.py```
 **Details**
 - 6 clock cycles per instruction (unpipelined)
   - Instruction fetch, register fetch, decode, execute, write back check, parallel write backs
-- 3x faster than x86 assembly written DFS
 - Node register:
   - 1 bit for traversal type (DFS or BFS)
   - 11 bits for current node
